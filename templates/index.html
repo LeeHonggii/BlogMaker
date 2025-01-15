@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jupyter Notebook Cell Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h2>Jupyter Notebook Cell Selector</h2>
+            <div class="upload-section">
+                <p class="instruction">주피터 노트북 파일을 업로드하고 필요없는 셀을 선택해주세요</p>
+                <input type="file" id="fileInput" accept=".ipynb" />
+            </div>
+            <div id="uploadedContent"></div>
+            <button id="processButton" class="process-button" style="display: none;">선택 완료</button>
+        </div>
+        <div class="right-panel">
+            <h2>블로그 포스트 생성 결과</h2>
+            <div class="blog-result-container">
+                <div id="blogResult" class="blog-content"></div>
+                <button id="copyButton" class="copy-button" style="display: none;">내용 복사</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="{{ url_for('static', path='/js/script.js') }}"></script>
+</body>
+</html>
