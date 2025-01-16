@@ -31,25 +31,24 @@ group_prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            """당신은 기술 블로그 작성을 위한 주피터 노트북 분석가입니다.
-        노트북의 셀들을 효과적인 설명을 위한 의미 있는 그룹으로 나누어주세요.
+            """
+        # 노트북의 셀들을 효과적인 설명을 위한 의미 있는 그룹으로 나누어주세요.
         
-        다음 기준으로 그룹을 나누세요:
-        1. 설정 및 소개: 프로젝트 목적, 환경 설정, 라이브러리 임포트 등
-        2. 주요 클래스/함수: 핵심 기능을 구현하는 코드 그룹
-        3. 유틸리티/헬퍼: 보조 기능을 담당하는 코드 그룹
-        4. 실행 및 데모: 실제 사용 예시와 결과를 보여주는 부분
+        # 다음 기준으로 그룹을 나누세요:
+        1. 주요 클래스/함수: 핵심 기능을 구현하는 코드 그룹
+        2. 유틸리티/헬퍼: 보조 기능을 담당하는 코드 그룹
+        3. 실행 및 데모: 실제 사용 예시와 결과를 보여주는 부분
         
-        마크다운 셀과 코드 셀의 연관성을 고려하여 그룹화하세요.
+        # 마크다운 셀과 코드 셀의 연관성을 고려하여 그룹화하세요.
         각 그룹은 독자가 따라하며 이해할 수 있는 단위여야 합니다.
         
-        각 그룹에 대해 다음 정보를 제공하세요:
+        # 각 그룹에 대해 다음 정보를 제공하세요:
         - start_idx: 그룹의 시작 셀 인덱스
         - end_idx: 그룹의 마지막 셀 인덱스
         - purpose: 이 그룹이 설명하는 기능과 독자가 얻을 수 있는 인사이트
         - title: 그룹을 대표하는 제목
         
-        다음과 같은 JSON 형식으로 반환해주세요:
+        # 다음과 같은 JSON 형식으로 반환해주세요:
         {{
             "groups": [
                 {{
@@ -74,9 +73,12 @@ analyzer_prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            """당신은 코딩 블로그 작성자입니다. 주어진 코드 그룹을 분석하여 독자들이 이해하기 쉽게 설명해주세요.
+            """
+        # 당신은 코딩 블로그 작성자입니다. 블로그을 작성하기전에 주어진 코드 그룹을 분석하여 학습한 내용에 대해서 다른 사람도 이해하기 쉽게 정리한 대본을 만드는일을 합니다.
         
-        다음 구조로 분석을 작성하세요:
+        ## 기본적인 구조 : 사용된 코드 - 설명
+
+        ## 설명을 작성할때 참고할 내용 :
         1. 코드의 목적과 동작 원리
            - 이 코드가 필요한 이유
            - 전체적인 로직의 흐름
@@ -87,17 +89,13 @@ analyzer_prompt = ChatPromptTemplate.from_messages(
            - 사용된 라이브러리/기술의 특징
         
         3. 구현의 특이사항
-           - 최적화/성능 고려사항
-           - 에러 처리 방식
            - 주의해야 할 부분
+           - 예시 데이터가 있을시 데이터 타입의 맞게 설명
         
-        4. 실제 적용 팁
-           - 실무에서 활용 방법
-           - 커스터마이징 포인트
-           - 주의사항 및 팁
         
-        마크다운 설명과 코드를 연계하여 분석하고,
-        실제 사용 시나리오를 고려하여 실용적인 인사이트를 제공하세요.""",
+        마크다운 설명과 코드를 연계하여 분석하고 작성해야하는데 그룹안에 코드들이 비슷한 내용이면 묶어서 설명해주세요
+        # 단 사용된 코드는 빠짐 없이 작성되어야합니다  
+            """,
         ),
         (
             "user",
@@ -116,28 +114,25 @@ blog_prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            """당신은 기술 블로그 작성자입니다.
-        분석된 코드 그룹들을 바탕으로 하나의 완성된 기술 블로그 포스트를 작성해주세요.
+            """
+        # 당신은 코딩 블로그 작성자입니다. 분석된 코드 그룹의 대본을 바탕으로 하나의 완성된 기술 블로그 포스트를 작성해주세요.
         
-        다음 구조로 작성하세요:
-        1. 소개 (처음 그룹의 내용 활용)
-           - 프로젝트의 목적과 해결하려는 문제
-           - 사용된 주요 기술과 선택 이유
-           - 독자가 얻을 수 있는 인사이트
+        # 다음 구조로 작성하세요:
+        1. 소개 (프리뷰)
+           - 오늘 작성하게될 기술들이 간단한 기술 설명
+           - 사용된 주요 기술과 선택 이유(추천이유) 
         
         2. 본문 (각 그룹의 분석 내용을 자연스럽게 연결)
            - 그룹 간의 논리적 흐름 유지
-           - 코드와 설명의 조화로운 구성
-           - 실제 구현 시 주의사항 강조
+           - 무조건 사용된 코드 작성후 설명 작성 
         
         3. 마무리
+           - 문제가 있었을시 자신이 어떠한 과정을 거쳐서 문제를 해결했는가
            - 전체 내용 요약
-           - 실제 활용 시나리오 제시
-           - 추가 개선/확장 포인트 제안
+
         
-        작성 시 주의사항:
+        # 작성 시 주의사항:
         - 각 그룹의 내용을 단순 나열하지 말고 자연스럽게 연결하세요
-        - 전문적이면서도 이해하기 쉽게 설명하세요
         - 실제 사용자가 따라할 수 있도록 구체적으로 작성하세요
         - 각 섹션이 자연스럽게 이어지도록 적절한 전환구를 사용하세요""",
         ),
@@ -159,7 +154,7 @@ def group_cells(state: NotebookState):
     )
 
     grouper = group_prompt | ChatOpenAI(
-        temperature=0, model_name="gpt-4o", max_tokens=4000, streaming=True
+        temperature=0, model_name="gpt-4o", max_tokens=15000, streaming=True
     ).with_structured_output(CellGroups)
     result = grouper.invoke({"cell_contents": cell_contents})
 
@@ -172,7 +167,7 @@ def analyze_groups(state: NotebookState):
     analyzed_groups = []
 
     analyzer = analyzer_prompt | ChatOpenAI(
-        temperature=0, model_name="gpt-4o", max_tokens=4000, streaming=True
+        temperature=0, model_name="gpt-4o", max_tokens=15000, streaming=True
     )
 
     for group in groups:
@@ -214,7 +209,7 @@ def generate_blog_post(state: NotebookState):
     blog_sections = []
 
     blog_generator = blog_prompt | ChatOpenAI(
-        temperature=0.7, model_name="gpt-4o", max_tokens=4000, streaming=True
+        temperature=0.7, model_name="gpt-4o", max_tokens=15000, streaming=True
     )
 
     # 각 그룹별로 개별적인 블로그 섹션 생성
